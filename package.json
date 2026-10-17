@@ -1,0 +1,19 @@
+{
+  "name": "@local/neo4j-browser",
+  "version": "1.5.1",
+  "private": true,
+  "repository": { "type": "git", "url": "git+ssh://git@github.com/themaestr00/dsh-neo4j-browser.git" },
+  "homepage": "https://github.com/themaestr00/dsh-neo4j-browser#readme",
+  "bugs": { "url": "https://github.com/themaestr00/dsh-neo4j-browser/issues" },
+  "type": "module",
+  "description": "Neo4j graph browser with schema-aware Cypher generation",
+  "icon": "./icon.svg",
+  "exports": { ".": "./index.js", "./client": "./client.js", "./package.json": "./package.json", "./locale/*.json": "./locale/*.json" },
+  "files": ["index.js", "backend.js", "client.js", "cordis.patch.yml", "icon.svg", "locale", "README.md"],
+  "scripts": { "test": "node --test backend.test.js graph.test.js state.test.js" },
+  "dependencies": { "neo4j-driver": "^5.28.1" },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": { "platform": "web", "immediately": true, "inject": ["@deepseek-ai/dsh-client-ui-conversation"] }
+  }
+}

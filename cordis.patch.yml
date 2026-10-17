@@ -1,0 +1,4 @@
+- insert:
+    - id: local-neo4j-browser
+      name: '@local/neo4j-browser'
+      config: {}
