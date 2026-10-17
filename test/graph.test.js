@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
 // Evaluate only the pure geometry prelude, never the React factory or DOM.
-const client = await readFile(new URL('./client.js', import.meta.url), 'utf8');
+const client = await readFile(new URL('../src/client.js', import.meta.url), 'utf8');
 const prelude = client.slice(0, client.indexOf('window.__ModuleLoader__.load('));
 const core = vm.runInNewContext(prelude + '\ncreateNeo4jGraphCore()', {}, {timeout:1000});
 const nodes = count => Array.from({length:count}, (_,i)=>({id:String(i),labels:['Product'],properties:{name:`Product ${i}`}}));

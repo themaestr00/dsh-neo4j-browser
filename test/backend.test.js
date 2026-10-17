@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Neo4jBrowser, LIMITS, normalize } from './backend.js';
-import { registerBackend } from './index.js';
+import { Neo4jBrowser, LIMITS, normalize } from '../src/backend.js';
+import { registerBackend } from '../src/index.js';
 const record = row => ({ keys: Object.keys(row), get: key => row[key] });
 function result(rows, queryType = 'r') {
   return { then(resolve, reject) { return Promise.resolve({ summary: { queryType }, records: rows.map(record) }).then(resolve, reject); }, async *[Symbol.asyncIterator]() { for (const row of rows) yield record(row); } };

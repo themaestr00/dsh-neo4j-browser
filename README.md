@@ -59,12 +59,31 @@ Replacing an installed bundle can require restarting the **Harness Host process*
 
 A live check before this release found the saved package at 1.4.0 while the running tool still emitted the pre-1.4 error `The model did not finish a complete query.` That old error is absent from the installed 1.4 source, confirming an older in-memory module remained active. A browser refresh cannot replace that Host module.
 
+## Project structure
+
+```text
+src/
+  index.js             # Host plugin entry and UI/tool adapters
+  backend.js           # Neo4j connection, schema cache and query generation
+  client.js            # Sidebar UI and graph interaction
+assets/
+  icon.svg             # Plugin artwork
+locale/
+  en.json              # English plugin metadata
+test/                  # Backend, graph, persistence and package tests
+cordis.patch.yml        # Bundle composition
+package.json            # Exports and package allowlist
+```
+
+The package exports resolve directly to the source files; there is no generated build directory. Only source, assets, locale metadata, the bundle patch and documentation are included in the installable package. Tests remain in the Git repository.
+
 ## Development and verification
 
 ```sh
-npm install --ignore-scripts
+npm ci --ignore-scripts
+npm run check
 npm test
-node --check client.js
+npm pack --dry-run
 ```
 
 Install this directory using the Harness Plugin Manager. Client registrations use `sidebar.panellist` and the matching `main` slot, without replacing existing entries. All panel colors use Harness theme tokens. Backend routes use authenticated Connection admission and reject malformed/oversized requests. Driver error details are withheld to avoid leaking credentials or property data.

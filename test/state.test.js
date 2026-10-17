@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-const client=await readFile(new URL('./client.js',import.meta.url),'utf8');
+const client=await readFile(new URL('../src/client.js',import.meta.url),'utf8');
 const prelude=client.slice(0,client.indexOf('window.__ModuleLoader__.load('));
 const core=vm.runInNewContext(prelude+'\ncreateNeo4jStateCore()',{}, {timeout:1000});
 function memory(){const values=new Map();return {getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};}
