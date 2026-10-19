@@ -2,12 +2,16 @@
 
 Open **Neo4j Browser** as a full page from the left sidebar, or choose **Neo4j Browser** on the right sidebar's **Start** page to keep it beside the conversation. This is an independent Neo4j-style browser, not the official Neo4j Browser application.
 
+## Releases
+
+**v1.0.0** is the first tagged stable release and the baseline for public versioning. Earlier version numbers in the commit history were development iterations, not public tagged releases. Existing functionality and commit history are preserved; future releases follow semantic versioning from 1.0.0.
+
 ## Install
 
 In the Harness **Plugins** page, install this Git bundle:
 
 ```text
-git+ssh://git@github.com/themaestr00/dsh-neo4j-browser.git
+git+ssh://git@github.com/themaestr00/dsh-neo4j-browser.git#v1.0.0
 ```
 
 Alternatively, clone the repository and install its absolute directory through the Harness Plugin Manager:
@@ -97,9 +101,9 @@ Generated Cypher is a draft, never automatically executed. Review identifiers, s
 
 ## Activation and version checks
 
-Replacing an installed bundle can require restarting the **Harness Host process**, not just refreshing the page or reopening the Neo4j panel. The page displays `UI <version> / Host <version>`. For this release both must show `1.9.1`. An unknown or mismatched Host version displays an explicit restart warning; UI generation checks the running version before making a model call. `neo4j_browser(action: status)` also returns the backend version and connection/cache identity.
+Replacing an installed bundle can require restarting the **Harness Host process**, not just refreshing the page or reopening the Neo4j panel. The page displays `UI <version> / Host <version>`. For this release both must show `1.0.0`. An unknown or mismatched Host version displays an explicit restart warning; UI generation checks the running version before making a model call. `neo4j_browser(action: status)` also returns the backend version and connection/cache identity.
 
-A live check before this release found the saved package at 1.4.0 while the running tool still emitted the pre-1.4 error `The model did not finish a complete query.` That old error is absent from the installed 1.4 source, confirming an older in-memory module remained active. A browser refresh cannot replace that Host module.
+Installing updated package files does not necessarily replace an already loaded Host module. A browser refresh cannot replace that Host module; follow the Plugin Manager's activation result.
 
 ## Project structure
 

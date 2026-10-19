@@ -177,7 +177,7 @@ window.__ModuleLoader__.load({
     const React = require('react');
     const h = React.createElement;
     const { useState, useEffect, useRef, useMemo } = React;
-    const CLIENT_VERSION='1.9.1',stateCore=createNeo4jStateCore();
+    const CLIENT_VERSION='1.0.0',stateCore=createNeo4jStateCore();
     return {
       inject: ['slots', 'locale', 'sidebarRightTabs'],
       apply(ctx) {
