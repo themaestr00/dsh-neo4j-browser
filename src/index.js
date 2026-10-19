@@ -38,16 +38,18 @@ export function registerBackend(ctx, browser) {
   }));
   ctx.effect(() => ctx.tools.register({
     name: 'neo4j_browser',
-    description: 'Inspect schema, generate Cypher, read/query or expand a Neo4j graph using the UI-established profile-shared connection. Generated queries are not executed. Database writes and credentials are UI-only. Config changes are memory-only; disconnect affects all sessions.',
+    description: 'Inspect schema, generate Cypher, read/query or expand a Neo4j graph using the UI-established connection. List/select accessible databases. Generated queries are not executed. Credentials and writes are UI-only. Config is memory-only; database selection and disconnect affect all profile sessions.',
     parameters: {
       type: 'object', additionalProperties: false, required: ['action'],
       properties: {
-        action: { type: 'string', enum: ['status', 'disconnect', 'schema', 'query', 'expand', 'generate', 'config'] },
+        action: { type: 'string', enum: ['status', 'disconnect', 'schema', 'query', 'expand', 'generate', 'config', 'databases', 'use_database'] },
         query: { type: 'string', description: 'For query: a single read-only Cypher statement, verified with EXPLAIN.' },
         parameters: { type: 'object', additionalProperties: true, description: 'Cypher parameters for query.' },
         labels: { type: 'array', items: { type: 'string' }, description: 'For schema/generate: optional label scope, at most 30 labels.' },
-        refresh: { type: 'boolean', description: 'For schema: bypass and replace the connection metadata cache; default false.' },
+        refresh: { type: 'boolean', description: 'For schema/databases: bypass the metadata cache; default false.' },
         question: { type: 'string', description: 'For generate: a question, at most 4000 characters; only it and metadata are sent to the model.' },
+        expectedConnectionId:{type:'string',maxLength:128,description:'For query/expand: connectionId from status; reject if another session changed the database or connection.'},
+        database: { type: 'string', maxLength:256, description: 'For use_database: accessible database name; empty selects the user default. Reuses current credentials.' },
         elementId: { type: 'string', description: 'For expand: a node elementId from query results.' },
         limit: { type: 'integer', description: 'For query/expand: row cap 1–200; defaults to 25.' },
         prompt: { type: 'string', description: 'For config: replacement English generation instruction, at most 8000 characters.' },

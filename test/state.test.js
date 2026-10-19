@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-const client=await readFile(new URL('../src/client.js',import.meta.url),'utf8');
-const prelude=client.slice(0,client.indexOf('window.__ModuleLoader__.load('));
+const client=await readFile(new URL('../src/client.js',import.meta.url),'utf8')+'\n'+await readFile(new URL('../src/workspace-panel.js',import.meta.url),'utf8');
+const prelude=client.slice(0,client.indexOf('// Browser editor imports'));
 const core=vm.runInNewContext(prelude+'\ncreateNeo4jStateCore()',{}, {timeout:1000});
 function memory(){const values=new Map();return {getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};}
 test('draft, parameters, history and preferences survive new browser-state instances',()=>{
@@ -37,6 +37,6 @@ test('draft flush hooks and cached-schema/version guards exist in the UI',()=>{
   assert.ok(client.includes("window.removeEventListener('pagehide',flush);flush()"));
   assert.ok(client.includes('if(status.schema){setSchema(status.schema);return;}'));
   assert.ok(client.includes('running.version!==CLIENT_VERSION'));
-  assert.ok(client.includes('UI ${CLIENT_VERSION} / Host ${status.version'));
-  assert.ok(client.includes('status.version===CLIENT_VERSION?{refresh:true}:{}'));
+  assert.ok(client.includes('UI ${version} / Host ${status.version'));
+  assert.ok(client.includes('status.version===version?{refresh:true}:{}'));
 });

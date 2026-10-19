@@ -137,7 +137,7 @@ test('schema is cached per connection and scope; status reuses it; refresh and r
   const second=await f.browser.dispatch({action:'schema'});assert.equal(f.calls.length,count);
   assert.deepEqual(second,first);second.labels.push('untrusted mutation');
   assert.equal((await f.browser.dispatch({action:'schema'})).labels.length,0);
-  const status=await f.browser.dispatch({action:'status'});assert.equal(status.version,'1.5.1');assert.ok(status.schema);assert.ok(status.schemaCachedAt);
+  const status=await f.browser.dispatch({action:'status'});assert.equal(status.version,'1.9.1');assert.ok(status.schema);assert.ok(status.schemaCachedAt);
   await f.browser.dispatch({action:'generate',question:'Find people'});assert.equal(f.calls.length,count);
   await f.browser.dispatch({action:'schema',labels:['B','A']});const scopedCount=f.calls.length;
   await f.browser.dispatch({action:'schema',labels:['A','B']});assert.equal(f.calls.length,scopedCount);

@@ -4,8 +4,8 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
 // Evaluate only the pure geometry prelude, never the React factory or DOM.
-const client = await readFile(new URL('../src/client.js', import.meta.url), 'utf8');
-const prelude = client.slice(0, client.indexOf('window.__ModuleLoader__.load('));
+const client = await readFile(new URL('../src/client.js', import.meta.url), 'utf8')+'\n'+await readFile(new URL('../src/workspace-panel.js',import.meta.url),'utf8');
+const prelude = client.slice(0, client.indexOf('// Browser editor imports'));
 const core = vm.runInNewContext(prelude + '\ncreateNeo4jGraphCore()', {}, {timeout:1000});
 const nodes = count => Array.from({length:count}, (_,i)=>({id:String(i),labels:['Product'],properties:{name:`Product ${i}`}}));
 const settle = (count,edges=[],previous={}) => { const s=core.simulation(nodes(count),edges,previous);for(let i=0;i<180;i++)s.step(previous);return s.snapshot(); };
@@ -34,7 +34,7 @@ test('expansion warm-starts existing coordinates without freezing old nodes',()=
   const simulation=core.simulation([{id:'__proto__'},{id:'constructor'}],[]);
   simulation.step();assert.equal(Object.keys(simulation.snapshot()).length,2);
 });
-test('repulsion remains active after cooling and displaces neighbors during and after drag',()=>{
+test('drag solver retains collision separation when explicitly stepped',()=>{
   const simulation=core.simulation(nodes(30),[]);
   for(let i=0;i<240;i++)simulation.step();
   const target=simulation.snapshot()['1'];
@@ -52,14 +52,14 @@ test('coincident expansion nodes resolve with only the dragged node fixed',()=>{
   for(let i=0;i<100;i++)simulation.step({'0':{x:0,y:0}});
   assert.ok(minimumDistance(simulation.snapshot())>=core.separation-1);
 });
-test('attraction and simulation pace match the pre-compaction release',()=>{
+test('drag solver retains gentle attraction without renderer warm-up steps',()=>{
   const simulation=core.simulation([{id:'solo'}],[],{solo:{x:1000,y:0}});
   simulation.step();
   assert.ok(Math.abs(simulation.snapshot().solo.x-999.675)<1e-9);
   for(let i=0;i<239;i++)simulation.step();
   assert.ok(simulation.snapshot().solo.x>850,'attraction must stay gentle');
   assert.ok(client.includes('Math.max(dragging?.85:.12,1-tick++/180)'));
-  assert.ok(client.includes('nodes.length>100?2:12'));
+  assert.ok(!client.includes('nodes.length>100?2:12'));assert.ok(client.includes('core.staticLayout(nodes,edges,previous)'));
   assert.ok(!client.includes('if(nodes.length<=100&&!drag.current)simulation.step'));
 });
 test('text uses true ellipsis, honors measured width, and preserves full short names',()=>{
@@ -70,7 +70,7 @@ test('text uses true ellipsis, honors measured width, and preserves full short n
   assert.ok(label.endsWith('…'));assert.ok(!label.includes('\ufffd'));assert.ok(measure(label)<=74);
   assert.equal(core.caption({id:'1',labels:['Product'],properties:{name:'Long full product name'}}),'Long full product name');
 });
-test('initial camera stays at actual size; fit is explicit and accounts for world bounds',()=>{
+test('explicit reset supports actual size and fit accounts for world bounds',()=>{
   const positions=settle(100),size={width:900,height:650};
   assert.equal(core.fitCamera(positions,size,false).z,1);
   const fit=core.fitCamera(positions,size);assert.ok(fit.z<1);
@@ -116,8 +116,8 @@ test('edge halo is a wide hoverable hit region and fullscreen retains the inspec
   assert.ok(client.includes("vectorEffect:'non-scaling-stroke',pointerEvents:'stroke'"));
   assert.ok(client.includes('.graph-edge:hover .edge-halo'));
   assert.ok(client.includes("onSelect({...edge,kind:'relationship'})"));
-  assert.ok(client.includes('(showDetails||expanded)&&overview'));
-  assert.ok(client.includes("onSelect:value=>{setSelected(value);if(value)setShowDetails(true);}"));
+  assert.ok(client.includes('const visibleInspector=showDetails||expanded'));assert.ok(client.includes('visibleInspector&&inspector'));
+  assert.ok(client.includes("const select=value=>{setSelected(value);if(value)openInspector('Properties');}"));
   assert.ok(client.includes('.result-layout.is-fullscreen>.inspector'));
 });
 test('captions prefer a meaningful product name over an opaque ID',()=>{

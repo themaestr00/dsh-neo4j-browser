@@ -1,22 +1,60 @@
 {
   "name": "@local/neo4j-browser",
-  "version": "1.5.1",
+  "version": "1.9.1",
   "private": true,
-  "repository": { "type": "git", "url": "git+ssh://git@github.com/themaestr00/dsh-neo4j-browser.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/themaestr00/dsh-neo4j-browser.git"
+  },
   "homepage": "https://github.com/themaestr00/dsh-neo4j-browser#readme",
-  "bugs": { "url": "https://github.com/themaestr00/dsh-neo4j-browser/issues" },
+  "bugs": {
+    "url": "https://github.com/themaestr00/dsh-neo4j-browser/issues"
+  },
   "type": "module",
   "description": "Neo4j graph browser with schema-aware Cypher generation",
   "icon": "./assets/icon.svg",
-  "exports": { ".": "./src/index.js", "./client": "./src/client.js", "./package.json": "./package.json", "./locale/*.json": "./locale/*.json" },
-  "files": ["src", "assets", "cordis.patch.yml", "locale", "README.md"],
-  "scripts": {
-    "check": "node --check src/index.js && node --check src/backend.js && node --check src/client.js",
-    "test": "node --test test/*.test.js"
+  "exports": {
+    ".": "./src/index.js",
+    "./client": "./dist/client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
   },
-  "dependencies": { "neo4j-driver": "^5.28.1" },
+  "files": [
+    "src",
+    "assets",
+    "dist",
+    "build.mjs",
+    "cordis.patch.yml",
+    "locale",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node --check src/index.js && node --check src/backend.js && node --check src/client.js && node --check src/cypher-editor.js && node --check src/cypher-completions.js && node --check src/editor-actions.js && node --check src/workspace-core.js && node --check src/workspace-panel.js && node --check src/workspace-styles.js && node --check src/query-errors.js && node --check src/graph-expansion.js && node --check src/graph-motion.js && node --check build.mjs",
+    "test": "npm run build && node --test test/*.test.js"
+  },
+  "dependencies": {
+    "neo4j-driver": "^5.28.1"
+  },
   "dsh": {
-    "bundle": { "patch": "./cordis.patch.yml" },
-    "client": { "platform": "web", "immediately": true, "inject": ["@deepseek-ai/dsh-client-ui-conversation"] }
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-sidebar-right"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.14",
+    "esbuild": "^0.28.2"
   }
 }
